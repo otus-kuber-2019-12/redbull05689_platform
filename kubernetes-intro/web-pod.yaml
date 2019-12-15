@@ -1,31 +1,28 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  creationTimestamp: null
-  labels:
-    run: web
   name: web
   labels:
-    app: web
+    key: app
 spec:
-  initContainers:
-  - name: init-index
-    image: busybox:1.31.0
-    command: ['sh', '-c', 'wget -O- *https://raw.githubusercontent.com/express42/otus-platformsnippets/master/Module-02/Introduction-to-Kubernetes/wget.sh | sh']
-    volumeMounts:
-    - name: app
-      mountPath: /app
   containers:
-  - image: redbull05689/webserver:latest
-    name: web
-    volumeMounts:
-    - name: app
-      mountPath: /app
+    - name: web
+      image: redbull05689/webserver:v3
+      volumeMounts:
+        - name: app
+          mountPath: /app
+  initContainers:
+    - name: init-index-page
+      image: busybox:1.31.0
+      command:
+        [
+          "sh",
+          "-c",
+          "wget -O- https://raw.githubusercontent.com/express42/otus-platform-snippets/master/Module-02/Introduction-to-Kubernetes/wget.sh | sh",
+        ]
+      volumeMounts:
+        - name: app
+          mountPath: /app
   volumes:
-  - name: app
-    emptyDir: {}    
-    #resources: {}
-  dnsPolicy: ClusterFirst
-  restartPolicy: Always
-status: {}
-
+    - name: app
+      emptyDir: {}
