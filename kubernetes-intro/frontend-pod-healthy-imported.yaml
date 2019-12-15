@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"creationTimestamp":null,"labels":{"run":"frontend"},"name":"frontend","namespace":"default"},"spec":{"containers":[{"env":[{"name":"PORT","value":"8080"},{"name":"PRODUCT_CATALOG_SERVICE_ADDR","value":"productcatalogservice:3550"},{"name":"CURRENCY_SERVICE_ADDR","value":"currencyservice:7000"},{"name":"CART_SERVICE_ADDR","value":"cartservice:7070"},{"name":"RECOMMENDATION_SERVICE_ADDR","value":"recommendationservice:8080"},{"name":"SHIPPING_SERVICE_ADDR","value":"shippingservice:50051"},{"name":"CHECKOUT_SERVICE_ADDR","value":"checkoutservice:5050"},{"name":"AD_SERVICE_ADDR","value":"adservice:9555"}],"image":"redbull05689/microservice-frontend:v1","name":"frontend","resources":{}}],"dnsPolicy":"ClusterFirst","restartPolicy":"Never"},"status":{}}
+  creationTimestamp: "2019-12-15T16:38:51Z"
+  labels:
+    run: frontend
+  name: frontend
+  namespace: default
+  resourceVersion: "65011"
+  selfLink: /api/v1/namespaces/default/pods/frontend
+  uid: c155973e-1f56-49ed-b088-79de8644a241
+spec:
+  containers:
+  - env:
+    - name: PORT
+      value: "8080"
+    - name: PRODUCT_CATALOG_SERVICE_ADDR
+      value: productcatalogservice:3550
+    - name: CURRENCY_SERVICE_ADDR
+      value: currencyservice:7000
+    - name: CART_SERVICE_ADDR
+      value: cartservice:7070
+    - name: RECOMMENDATION_SERVICE_ADDR
+      value: recommendationservice:8080
+    - name: SHIPPING_SERVICE_ADDR
+      value: shippingservice:50051
+    - name: CHECKOUT_SERVICE_ADDR
+      value: checkoutservice:5050
+    - name: AD_SERVICE_ADDR
+      value: adservice:9555
+    image: redbull05689/microservice-frontend:v1
+    imagePullPolicy: IfNotPresent
+    name: frontend
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-s26rh
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: minikube
+  priority: 0
+  restartPolicy: Never
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: default-token-s26rh
+    secret:
+      defaultMode: 420
+      secretName: default-token-s26rh
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2019-12-15T16:38:51Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2019-12-15T16:38:52Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2019-12-15T16:38:52Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2019-12-15T16:38:51Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://a1ed0b3b7f767178123cdf18468939006f64ad06961ca3dbf592e294bf1754b1
+    image: redbull05689/microservice-frontend:v1
+    imageID: docker-pullable://redbull05689/microservice-frontend@sha256:ca10634538d4642bdf55d1eb0bc5e00b0db0ebcf0acfeaab3a68a002c52b662a
+    lastState: {}
+    name: frontend
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2019-12-15T16:38:52Z"
+  hostIP: 192.168.64.4
+  phase: Running
+  podIP: 172.17.0.3
+  podIPs:
+  - ip: 172.17.0.3
+  qosClass: BestEffort
+  startTime: "2019-12-15T16:38:51Z"
