@@ -11,7 +11,7 @@ spec:
   initContainers:
   - name: init-index
     image: busybox:1.31.0
-    command: ['sh', '-c', 'wget -O- https://raw.githubusercontent.com/express42/otus-platformsnippets/master/Module-02/Introduction-to-Kubernetes/wget.sh | sh']
+    command: ['sh', '-c', 'wget -O- *https://raw.githubusercontent.com/express42/otus-platformsnippets/master/Module-02/Introduction-to-Kubernetes/wget.sh | sh']
     volumeMounts:
     - name: app
       mountPath: /app
@@ -28,3 +28,4 @@ spec:
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 status: {}
+
