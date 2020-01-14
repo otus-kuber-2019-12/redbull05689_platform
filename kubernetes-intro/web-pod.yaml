@@ -8,6 +8,12 @@ spec:
   containers:
     - name: web
       image: redbull05689/webserver:v3
+      livenessProbe:
+        tcpSocket: { port: 8000 }
+      readinessProbe: # Добавим проверку готовности
+        httpGet: 
+          path: /index.html # контент
+          port: 80
       volumeMounts:
         - name: app
           mountPath: /app
