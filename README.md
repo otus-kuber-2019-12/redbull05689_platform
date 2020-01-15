@@ -55,3 +55,10 @@ kubectl auth can-i create pods --as bob
 kubectl auth can-i create pods --as dave
 kubectl auth can-i create pods --as jane -n dev
 kubectl auth can-i get pods --as ken -n dev
+                                    Lab4 networks
+В процессе сделано:
+В папке kubernetes-networks созданны манифесты:
+    web-deploy.yaml с добавленными liavenessProbe и readynessProbe
+    Созданы сервисы ClusterIP и LoadBalancer(MetalLB)
+    В процессе был включен IPVS
+    Создан Ingress прокси
