@@ -62,3 +62,8 @@ kubectl auth can-i get pods --as ken -n dev
     Созданы сервисы ClusterIP и LoadBalancer(MetalLB)
     В процессе был включен IPVS
     Создан Ingress прокси
+            Lab 5
+В процессе сделано:
+    Создано локально хранилище Minio
+Запустить:
+   cd kubernetes-volumes && kubectl apply -f *
