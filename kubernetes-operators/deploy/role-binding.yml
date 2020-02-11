@@ -1,12 +1,12 @@
+kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
 metadata:
-  creationTimestamp: null
+  name: workshop-operator
+subjects:
+- kind: ServiceAccount
   name: mysql-operator
-rules:
-- apiGroups:
-  - '*'
-  resources:
-  - '*'
-  verbs:
-  - '*'
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: mysql-operator
+  apiGroup: rbac.authorization.k8s.io
