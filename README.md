@@ -68,7 +68,32 @@ kubectl auth can-i get pods --as ken -n dev
 Запустить:
    cd kubernetes-volumes && kubectl apply -f *
 
-   lab6 Operators
+
+   
+
+            Lab 6
+В процессе сделано:
+    Создан кластер в GCP
+    Создан ingress , chartmuseum , harbor , hipster shop helm , hipster-shop kubecfg
+Запустить:
+    gcloud container clusters create otus 
+
+    gcloud container clusters get-credentials otus
+
+    helm upgrade --install nginx-ingress stable/nginx-ingress --wait --namespace=nginx-ingress --version=1.11.1
+    kubectl create secret generic chartmuseum-secret --from-file=credentials.json -n chartmuseum
+    kubectl create ns chartmuseum
+    helm upgrade --install chartmuseum stable/chartmuseum --wait --namespace=chartmuseum --version=2.3.2 -f kubernetes-templating/chartmuseum/values.yaml
+   
+    kubectl apply -f kubernetes-templating/cert-manager/issuer-staging.yaml 
+    kubectl apply -f kubernetes-templating/cert-manager/issuer-prod.yaml 
+
+   helm upgrade --install harbor harbor/harbor --wait --namespace=harbor --version=1.1.2 -f kubernetes-templating/harbor/values.yaml 
+
+    helm upgrade --install hipster-shop kubernetes-templating/hipster-shop --namespace hipster-shop
+
+    kubecfg show kubernetes-templating/kubecfg/services.jsonnet 
+              lab7 Operators
    В процессе седлано:
     Оператор Mysql
    Запустить:
