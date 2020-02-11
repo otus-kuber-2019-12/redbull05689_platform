@@ -68,6 +68,9 @@ kubectl auth can-i get pods --as ken -n dev
 Запустить:
    cd kubernetes-volumes && kubectl apply -f *
 
+
+   
+
             Lab 6
 В процессе сделано:
     Создан кластер в GCP
@@ -90,3 +93,29 @@ kubectl auth can-i get pods --as ken -n dev
     helm upgrade --install hipster-shop kubernetes-templating/hipster-shop --namespace hipster-shop
 
     kubecfg show kubernetes-templating/kubecfg/services.jsonnet 
+              lab7 Operators
+   В процессе седлано:
+    Оператор Mysql
+   Запустить:
+     kubectl apply -f deploy/role.yml 
+     kubectl apply -f deploy/ClusterRoleBinding.yml 
+     kubectl apply -f deploy/deploy-operator.yml 
+     kubectl apply -f deploy/cr.yml
+     kubectl apply -f deploy/crd.yml
+export MYSQLPOD=$(kubectl get pods -l app=mysql-instance -o jsonpath="{.items[*].metadata.name}")
+   echo $MYSQLPOD
+    kubectl exec -it $MYSQLPOD -- mysql -potuspassword -e "select * from test;" otus-database
+    export MYSQLPOD=$(kubectl get pods -l app=mysql-instance -o jsonpath="{.items[*].metadata.name}")
+    kubectl exec -it $MYSQLPOD -- mysql -u root -potuspassword -e "CREATE TABLE test ( id smallint unsigned not null auto_increment, name varchar(20) not null, constraint pk_example primary key (id) );" otus-database
+    kubectl exec -it $MYSQLPOD -- mysql -potuspassword -e "INSERT INTO test ( id, name ) VALUES ( null, 'some data' );" otus-database
+    kubectl exec -it $MYSQLPOD -- mysql -potuspassword -e "INSERT INTO test ( id, name ) VALUES ( null, 'some data-2' );" otus-database
+    kubectl exec -it $MYSQLPOD -- mysql -potuspassword -e "select * from test;" otus-database
+    Проверить:
+    macpro:kubernetes-operators maksim.vasilev$ kubectl exec -it $MYSQLPOD -- mysql -potuspassword -e "select * from test;" otus-database
+mysql: [Warning] Using a password on the command line interface can be insecure.
++----+-------------+
+| id | name        |
++----+-------------+
+|  1 | some data   |
+|  2 | some data-2 |
++----+-------------+
