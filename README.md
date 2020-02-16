@@ -120,10 +120,15 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 |  2 | some data-2 |
 +----+-------------+
                             lab 8
+В процессе сделано:
+Cобран образ nginx
+Собран deployment nginx + sidecar nginx-exporter
+Установлен prometheus
+Как запустить проект:
+cd kubernetes-monitoring
 kubectl apply -f nginx-deployment.yaml
 kubectl apply -f nginx-service.yaml
 kubectl apply -f servicemonitor.yaml
-
 
 helm fetch stable/prometheus-operator --untar true
 
@@ -134,4 +139,14 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/re
 kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.35/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml --validate=false
 kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.35/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml --validate=false
 helm upgrade --install prometheus prometheus-operator/ --namespace=monitoring --set prometheusOperato
-r.createCustomResource=false -f values.yaml 
+r.createCustomResource=false -f values.yaml
+
+Как проверить работоспособность:
+kubectl port-forward nginx-XXXXXX-XXXXX 9113:9113; curl localhost:9113/metrics
+
+go to prom UI and verify targets and service discovery
+kubectl port-forward -n monitoring prometheus-prometheus-prometheus-oper-prometheus-0 9090:9090
+
+kubectl port-forward -n monitoring prometheus-grafana-XXXXXXX-XXXX 12345:3000;
+
+go to grafana ui and create some dashes, or use standard from source repo

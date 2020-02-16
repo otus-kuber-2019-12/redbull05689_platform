@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: redbull05689/nginxmonlab:0.0.1
+        image: redbull05689/nginxmonlab:0.0.2
         readinessProbe:
             httpGet:
               path: /basic_status
