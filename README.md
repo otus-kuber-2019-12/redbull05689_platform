@@ -180,8 +180,23 @@ kubectl create ns observability
 # ElasticSearch
 helm upgrade --install elasticsearch elastic/elasticsearch --namespace observability -f kubernetes-logging/elasticsearch.values.yaml
 # Kibana
-helm upgrade --install kibana elastic/kibana --namespace observability
+helm upgrade --install kibana elastic/kibana --namespace observability -f kubernetes-logging/kibana.values.yaml
 # Fluent Bit
-helm upgrade --install fluent-bit stable/fluent-bit --namespace observability
+helm upgrade --install fluent-bit stable/fluent-bit --namespace observability -f kubernetes-logging/fluent-bit.v
+alues.yaml
 
-helm upgrade --install elasticsearch elastic/elasticsearch --namespace observability -f kubernetes-logging/elasticsearch.values.yaml
+# Ingress
+helm upgrade --install nginx-ingress stable/nginx-ingress --namespace observability -f kubernetes-logging/nginx-ingress.values.yaml
+
+# Prometheus
+helm upgrade --install prometheus-operator stable/prometheus-operator --namespace=observability -f kubernetes-logging/prometheus-operator.values.yaml
+
+# Prometheus node-exporter
+helm upgrade --install elasticsearch-exporter stable/elasticsearch-exporter --set es.uri=http://elasticsearch-master:9200 --set serviceMonitor.enabled=true --namespace=observability
+
+Результат:
+1) Создан кластер в GCP
+2) Поднят EFK + Grafana + Loki
+3) Поднят Ingress
+4) Поднят Prometheus
+5) Экспортррованны дашборды Grafana и Loki

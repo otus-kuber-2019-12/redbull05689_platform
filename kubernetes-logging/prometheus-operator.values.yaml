@@ -1,0 +1,29 @@
+prometheus:
+  prometheusSpec:
+    retention: 1d
+
+    serviceMonitorNamespaceSelector: {} 
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {} 
+
+tolerations:
+  - key: node-role
+    operator: Equal
+    value: infra
+    effect: NoSchedule    
+
+nodeSelector: 
+  cloud.google.com/gke-nodepool: infra-pool    
+
+grafana:
+  adminPassword: "12345"
+
+  path: /
+  hosts:
+    - grafana.104.199.18.63.xip.io  
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki.loki:3100
+
