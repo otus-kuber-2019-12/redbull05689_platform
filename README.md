@@ -120,6 +120,7 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 |  2 | some data-2 |
 +----+-------------+
 
+
 Lab 9
 
 gcloud container clusters create otus --machine-type=n1-standard-2 --num-nodes=1
@@ -200,3 +201,36 @@ helm upgrade --install elasticsearch-exporter stable/elasticsearch-exporter --se
 3) Поднят Ingress
 4) Поднят Prometheus
 5) Экспортррованны дашборды Grafana и Loki
+
+                            lab 8
+В процессе сделано:
+Cобран образ nginx
+Собран deployment nginx + sidecar nginx-exporter
+Установлен prometheus
+Как запустить проект:
+cd kubernetes-monitoring
+kubectl apply -f nginx-deployment.yaml
+kubectl apply -f nginx-service.yaml
+kubectl apply -f servicemonitor.yaml
+
+helm fetch stable/prometheus-operator --untar true
+
+kubectl create ns monitoring
+kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.35/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml --validate=false
+kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.35/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml --validate=false
+kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.35/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml --validate=false
+kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.35/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml --validate=false
+kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.35/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml --validate=false
+helm upgrade --install prometheus prometheus-operator/ --namespace=monitoring --set prometheusOperato
+r.createCustomResource=false -f values.yaml
+
+Как проверить работоспособность:
+kubectl port-forward nginx-XXXXXX-XXXXX 9113:9113; curl localhost:9113/metrics
+
+go to prom UI and verify targets and service discovery
+kubectl port-forward -n monitoring prometheus-prometheus-prometheus-oper-prometheus-0 9090:9090
+
+kubectl port-forward -n monitoring prometheus-grafana-XXXXXXX-XXXX 12345:3000;
+
+go to grafana ui and create some dashes, or use standard from source repo
+
