@@ -1,4 +1,16 @@
+# Выполнено ДЗ №
 
+ - [x] Основное ДЗ
+ - [ ] Задание со *
+
+## В процессе сделано:
+
+1. Развернут Консул и Вольт 
+2. Поднят nginx  и реализованно автообновление сетрификатов
+3. Прилагаю скрины сертификатов
+
+
+```
 
 helm upgrade --install consul ./kubernetes-vault/consul-helm
 helm upgrade --install vault ./kubernetes-vault/vault-helm -f kubernetes-vault/vault-helm/values.yaml
@@ -13,8 +25,10 @@ TEST SUITE: None
 NOTES:
 Thank you for installing HashiCorp Vault!
 
+```
 
 Инициализация vault
+```
 macpro:redbull05689_platform maksim.vasilev$ kubectl exec -it vault-0 -- vault operator init --key-shares=1 --key-threshold=1
 Unseal Key 1: s2lHxDKzT85Hv2u+1gArxfD2V1f4jljVymZekO9EbhU=
 
@@ -30,13 +44,17 @@ reconstruct the master key, Vault will remain permanently sealed!
 
 It is possible to generate new unseal keys, provided you have a quorum of
 existing unseal keys shares. See "vault operator rekey" for more information.
+```
 
-#Распечатаем поды
+Распечатаем поды
+```
 kubectl exec -it vault-0 -- vault operator unseal 's2lHxDKzT85Hv2u+1gArxfD2V1f4jljVymZekO9EbhU='
 kubectl exec -it vault-1 -- vault operator unseal 's2lHxDKzT85Hv2u+1gArxfD2V1f4jljVymZekO9EbhU='
 kubectl exec -it vault-2 -- vault operator unseal 's2lHxDKzT85Hv2u+1gArxfD2V1f4jljVymZekO9EbhU=‘
 
-#Вывод после распечатки контейнеров
+```
+Вывод после распечатки контейнеров
+```
 macpro:redbull05689_platform maksim.vasilev$ k exec -ti vault-0 -- vault status
 Key             Value
 ---             -----
@@ -52,8 +70,10 @@ HA Enabled      true
 HA Cluster      https://10.24.0.11:8201
 HA Mode         active
 
+```
 
-#Вывод после логина через root token
+Вывод после логина через root token
+```
 macpro:redbull05689_platform maksim.vasilev$ kubectl exec -it vault-0 -- vault login
 Token (will be hidden): 
 Success! You are now authenticated. The token information displayed below
@@ -69,16 +89,20 @@ token_renewable      false
 token_policies       ["root"]
 identity_policies    []
 policies             ["root”]
+```
 
 
-#Список авторизаций после логина через root token
+Список авторизаций после логина через root token
+```
 macpro:redbull05689_platform maksim.vasilev$ kubectl exec -it vault-0 -- vault auth list
 Path      Type     Accessor               Description
 ----      ----     --------               -----------
 token/    token    auth_token_61837593    token based credentials
+```
 
-#  Выводы команд чтения секретов
+  Выводы команд чтения секретов
 
+```
 kubectl exec -it vault-0 -- vault secrets list --detailed
 Path          Plugin       Accessor              Default TTL    Max TTL    Force No Cache    Replication    Seal Wrap    External Entropy Access    Options    Description                                                UUID
 ----          ------       --------              -----------    -------    --------------    -----------    ---------    -----------------------    -------    -----------                                                ----
@@ -99,20 +123,24 @@ Key         Value
 username    otus
 
 
-#Обновленный список после подключения авторизации через k8s
+```
+Обновленный список после подключения авторизации через k8s
+```
 macpro:redbull05689_platform maksim.vasilev$ kubectl exec -it vault-0 -- vault auth list
 Path           Type          Accessor                    Description
 ----           ----          --------                    -----------
 kubernetes/    kubernetes    auth_kubernetes_f7f9b7e9    n/a
 token/         token         auth_token_61837593         token based credentials
+```
 
 
-Вопрос:Почему мы смогли записать otus-rw/config1 но не смогли otusrw/config?
+**Вопрос:**Почему мы смогли записать otus-rw/config1 но не смогли otusrw/config?
     Потому что политика позволяла создавать, но не позволяла перезаписывать.
 
 
 
-#Обновил секрет и вывел index.html из тестового пода
+Обновил секрет и вывел index.html из тестового пода
+```
 macpro:redbull05689_platform maksim.vasilev$ kubectl exec -it vault-0 -- vault read otus/otus-rw/config
 Key                 Value
 ---                 -----
@@ -134,8 +162,11 @@ Use 'kubectl describe pod/vault-agent-example -n default' to see all of the cont
   </body>
   </html>
 
+```
+
 
 Создание и отзыв сертификата:
+```
 macpro:kubernetes-vault maksim.vasilev$ kubectl exec -it vault-0 -- vault write pki_int/issue/example-dot-ru common_name="gitlab.example.ru" ttl="24h"
 Key                 Value
 ---                 -----
@@ -330,34 +361,35 @@ Key                        Value
 revocation_time            1583679764
 revocation_time_rfc3339    2020-03-08T15:02:44.760722998Z
 macpro:kubernetes-vault maksim.vasilev$
+```
 
-#Сгенерировал ключи и обновил values.yml для helm cогласно данной инструкции
+Сгенерировал ключи и обновил values.yml для helm cогласно данной инструкции
 https://www.vaultproject.io/docs/platform/k8s/helm/examples/standalone-tls/
 
 ! tls_disable=0 для работы https
 
-#Для проверки поднял под
+Для проверки поднял под
+```
 kubectl run --generator=run-pod/v1 tmp --rm -i --tty --serviceaccount=vault-auth --image alpine:3.7
 apk add curl jq
 VAULT_ADDR=https://vault:8200
 KUBE_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token) 
-# curl -s --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt --request POST --data '{"jwt": "'$KUBE_TOKEN'", "role": "otus"}' $VAULT_ADDR/
+ curl -s --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt --request POST --data '{"jwt": "'$KUBE_TOKEN'", "role": "otus"}' $VAULT_ADDR/
 v1/auth/kubernetes/login
 {"request_id":"de01cee8-f36b-86bd-76e2-b8bf3a3422d3","lease_id":"","renewable":false,"lease_duration":0,"data":null,"wrap_info":null,"warnings":null,"a
 uth":{"client_token":"s.qpjYyW0JHOLoxaYsphwUlEXq","accessor":"JKk8B8spaQwXo1q52wMVgDbG","policies":["default","otus-policy"],"token_policies":["default
 ","otus-policy"],"metadata":{"role":"otus","service_account_name":"vault-auth","service_account_namespace":"default","service_account_secret_name":"vau
 lt-auth-token-pch8h","service_account_uid":"b55a52ec-613d-11ea-8d8e-42010af00230"},"lease_duration":86400,"renewable":true,"entity_id":"f7d60355-f73f-7
 221-0028-bd90cffd5f3e","token_type":"service","orphan":true}}
-
-
-
-#Динамические сертификаты для nginx
+```
+<img width="1358" alt="Screen Shot 2020-03-10 at 5 01 42 PM" src="https://user-images.githubusercontent.com/37435176/76338129-53ccaf00-6309-11ea-8603-44276406ceaf.png">
+Динамические сертификаты для nginx:
 Добавил в политику права на изменения PKI
 
+## Как проверить работоспособность:
+ - Например, перейти по ссылке https://35.233.117.15:8443/basic_status
+![Screen Shot 2020-03-10 at 5 45 09 PM](https://user-images.githubusercontent.com/37435176/76337855-005a6100-6309-11ea-898c-bbd6c0ee9a05.png)
+![Screen Shot 2020-03-10 at 5 59 39 PM](https://user-images.githubusercontent.com/37435176/76337860-02242480-6309-11ea-9c28-a10935e327cc.png)
 
-
-
-
-
-
-
+## PR checklist:
+ - [ ] Выставлен label с номером домашнего задания
