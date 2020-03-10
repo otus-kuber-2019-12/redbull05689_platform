@@ -93,6 +93,7 @@ kubectl auth can-i get pods --as ken -n dev
     helm upgrade --install hipster-shop kubernetes-templating/hipster-shop --namespace hipster-shop
 
     kubecfg show kubernetes-templating/kubecfg/services.jsonnet 
+
               lab7 Operators
    В процессе седлано:
     Оператор Mysql
@@ -150,3 +151,4 @@ kubectl port-forward -n monitoring prometheus-prometheus-prometheus-oper-prometh
 kubectl port-forward -n monitoring prometheus-grafana-XXXXXXX-XXXX 12345:3000;
 
 go to grafana ui and create some dashes, or use standard from source repo
+
