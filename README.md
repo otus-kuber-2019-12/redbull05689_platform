@@ -93,6 +93,7 @@ kubectl auth can-i get pods --as ken -n dev
     helm upgrade --install hipster-shop kubernetes-templating/hipster-shop --namespace hipster-shop
 
     kubecfg show kubernetes-templating/kubecfg/services.jsonnet 
+
               lab7 Operators
    В процессе седлано:
     Оператор Mysql
@@ -120,83 +121,36 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 |  2 | some data-2 |
 +----+-------------+
 
-Lab 9
+                            lab 8
+В процессе сделано:
+Cобран образ nginx
+Собран deployment nginx + sidecar nginx-exporter
+Установлен prometheus
+Как запустить проект:
+cd kubernetes-monitoring
+kubectl apply -f nginx-deployment.yaml
+kubectl apply -f nginx-service.yaml
+kubectl apply -f servicemonitor.yaml
 
-gcloud container clusters create otus --machine-type=n1-standard-2 --num-nodes=1
-gcloud container node-pools create infra-pool \
-      --cluster otus \
-      --machine-type n1-standard-2 \
-      --num-nodes 3 \
-      --no-enable-autoupgrade
+helm fetch stable/prometheus-operator --untar true
 
-kubectl taint nodes gke-otus-infra-pool-d7fecccb-5x79 node-role=infra:NoSchedule
-kubectl taint nodes gke-otus-infra-pool-d7fecccb-9vv5 node-role=infra:NoSchedule
-kubectl taint nodes gke-otus-infra-pool-d7fecccb-xjg0 node-role=infra:NoSchedule
+kubectl create ns monitoring
+kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.35/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml --validate=false
+kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.35/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml --validate=false
+kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.35/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml --validate=false
+kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.35/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml --validate=false
+kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.35/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml --validate=false
+helm upgrade --install prometheus prometheus-operator/ --namespace=monitoring --set prometheusOperato
+r.createCustomResource=false -f values.yaml
 
-macpro:redbull05689_platform maksim.vasilev$ kubectl get nodes
-NAME                                  STATUS   ROLES    AGE   VERSION
-gke-otus-default-pool-a78dc33f-c1vm   Ready    <none>   78m   v1.14.10-gke.17
-gke-otus-infra-pool-d7fecccb-5x79     Ready    <none>   74m   v1.14.10-gke.17
-gke-otus-infra-pool-d7fecccb-9vv5     Ready    <none>   74m   v1.14.10-gke.17
-gke-otus-infra-pool-d7fecccb-xjg0     Ready    <none>   74m   v1.14.10-gke.17
+Как проверить работоспособность:
+kubectl port-forward nginx-XXXXXX-XXXXX 9113:9113; curl localhost:9113/metrics
 
-kubectl create ns microservices-demo
-kubectl apply -f https://raw.githubusercontent.com/express42/otus-platform-snippets/master/Module-02/Logging/microservices-demo-without-resources.yaml -n microservices-demo
+go to prom UI and verify targets and service discovery
+kubectl port-forward -n monitoring prometheus-prometheus-prometheus-oper-prometheus-0 9090:9090
+
+kubectl port-forward -n monitoring prometheus-grafana-XXXXXXX-XXXX 12345:3000;
+
+go to grafana ui and create some dashes, or use standard from source repo
 
 
-macpro:redbull05689_platform maksim.vasilev$ kubectl get pods -n microservices-demo -o wide
-NAME                                     READY   STATUS             RESTARTS   AGE     IP           NODE                                  NOMINATED NODE   RE
-ADINESS GATES
-adservice-6898984d4c-ccmkz               1/1     Running            0          2m39s   10.24.0.24   gke-otus-default-pool-a78dc33f-c1vm   <none>           <n
-one>
-cartservice-86854d9586-x9r4g             1/1     Running            2          2m41s   10.24.0.19   gke-otus-default-pool-a78dc33f-c1vm   <none>           <n
-one>
-checkoutservice-85597d98b5-5t7z5         1/1     Running            0          2m44s   10.24.0.14   gke-otus-default-pool-a78dc33f-c1vm   <none>           <n
-one>
-currencyservice-c97fb88c9-fxjqw          1/1     Running            0          2m40s   10.24.0.21   gke-otus-default-pool-a78dc33f-c1vm   <none>           <n
-one>
-emailservice-c6958d989-xxfnl             1/1     Running            0          2m45s   10.24.0.13   gke-otus-default-pool-a78dc33f-c1vm   <none>           <n
-one>
-frontend-756f85785-8h7qz                 1/1     Running            0          2m43s   10.24.0.16   gke-otus-default-pool-a78dc33f-c1vm   <none>           <n
-one>
-loadgenerator-755dcf9f5d-kjnnv           0/1     CrashLoopBackOff   3          2m41s   10.24.0.20   gke-otus-default-pool-a78dc33f-c1vm   <none>           <n
-one>
-paymentservice-66fbfd9d8f-gbcxf          1/1     Running            0          2m42s   10.24.0.17   gke-otus-default-pool-a78dc33f-c1vm   <none>           <n
-one>
-productcatalogservice-78694d9b67-7v8p6   1/1     Running            0          2m42s   10.24.0.18   gke-otus-default-pool-a78dc33f-c1vm   <none>           <n
-one>
-recommendationservice-948bbf47c-ph428    1/1     Running            0          2m44s   10.24.0.15   gke-otus-default-pool-a78dc33f-c1vm   <none>           <n
-one>
-redis-cart-6cf575c898-8mggm              1/1     Running            0          2m39s   10.24.0.22   gke-otus-default-pool-a78dc33f-c1vm   <none>           <n
-one>
-shippingservice-7fc8b8d49f-zmxv6         1/1     Running            0          2m40s   10.24.0.23   gke-otus-default-pool-a78dc33f-c1vm   <none>           <n
-one>
-
-#Добавим репозиторий
-helm repo add elastic https://helm.elastic.co
-
-# EFK
-kubectl create ns observability
-# ElasticSearch
-helm upgrade --install elasticsearch elastic/elasticsearch --namespace observability -f kubernetes-logging/elasticsearch.values.yaml
-# Kibana
-helm upgrade --install kibana elastic/kibana --namespace observability -f kubernetes-logging/kibana.values.yaml
-# Fluent Bit
-helm upgrade --install fluent-bit stable/fluent-bit --namespace observability -f kubernetes-logging/fluent-bit.v
-alues.yaml
-
-# Ingress
-helm upgrade --install nginx-ingress stable/nginx-ingress --namespace observability -f kubernetes-logging/nginx-ingress.values.yaml
-
-# Prometheus
-helm upgrade --install prometheus-operator stable/prometheus-operator --namespace=observability -f kubernetes-logging/prometheus-operator.values.yaml
-
-# Prometheus node-exporter
-helm upgrade --install elasticsearch-exporter stable/elasticsearch-exporter --set es.uri=http://elasticsearch-master:9200 --set serviceMonitor.enabled=true --namespace=observability
-
-Результат:
-1) Создан кластер в GCP
-2) Поднят EFK + Grafana + Loki
-3) Поднят Ingress
-4) Поднят Prometheus
-5) Экспортррованны дашборды Grafana и Loki
