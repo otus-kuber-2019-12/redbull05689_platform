@@ -1,0 +1,11 @@
+elasticsearchHosts: http://elasticsearch-master-headless:9200
+
+ingress:
+  enabled: true
+  annotations: {
+    kubernetes.io/ingress.class: nginx
+  }
+  path: /
+  hosts:
+  - kibana.35.205.254.238.xip.io
+#kubectl get svc -n observability | grep ingress-controller

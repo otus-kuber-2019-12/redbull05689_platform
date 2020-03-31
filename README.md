@@ -120,6 +120,7 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 |  1 | some data   |
 |  2 | some data-2 |
 +----+-------------+
+
                             lab 8
 В процессе сделано:
 Cобран образ nginx
@@ -151,4 +152,5 @@ kubectl port-forward -n monitoring prometheus-prometheus-prometheus-oper-prometh
 kubectl port-forward -n monitoring prometheus-grafana-XXXXXXX-XXXX 12345:3000;
 
 go to grafana ui and create some dashes, or use standard from source repo
+
 
