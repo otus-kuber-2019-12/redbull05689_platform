@@ -30,6 +30,7 @@ kubectl apply -f ./deploy/operator.yaml
 # Запустил пример
 kubectl apply -f ./deploy/cr.yaml
 # Результат до применения политики
+```
 macpro:kit maksim.vasilev$  kubectl describe netperf.app.example.com/example
 Name:         example
 Namespace:    default
@@ -54,9 +55,9 @@ Status:
   Speed Bits Per Sec:  16164.76
   Status:              Done
 Events:                <none>
-
+```
 # Результат после мприменения политики
-
+```
 maksim.vasilev$ kubectl describe netperf.app.example.com/example
 Name:         example
 Namespace:    default
@@ -81,7 +82,7 @@ Status:
   Speed Bits Per Sec:  0
   Status:              Started test
 Events:                <none>
-
+```
 !!! Если после применения политики результаты теста в статусе Done, то нужно перезапустить тест netperf kubectl delete -f kit/netperf-operator/deploy/cr.yaml && kubectl apply -f kit/netperf-operator/deploy/cr.yaml 
 
 # Скачал iptailer
@@ -96,7 +97,7 @@ kubectl apply -f kit/kit-clusterrolebinding.yaml
 kubectl apply -f kit/iptables-tailer.yaml 
 
 # Вывод kubectl describe pod --selector=app=netperf-operator
-
+```
 ...
 Events:
   Type     Reason      Age   From                                          Message
@@ -106,6 +107,6 @@ Events:
   Normal   Created     16s   kubelet, gke-otus-default-pool-c5c1a12a-5d4s  Created container netperf-server-42010a840209
   Normal   Started     16s   kubelet, gke-otus-default-pool-c5c1a12a-5d4s  Started container netperf-server-42010a840209
   Warning  PacketDrop  13s   kube-iptables-tailer                          Packet dropped when receiving traffic from client (10.24.1.15)
-
+```
 # Удалим кластер
 gcloud beta container clusters delete otus
