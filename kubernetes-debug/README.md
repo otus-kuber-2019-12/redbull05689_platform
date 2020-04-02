@@ -1,12 +1,12 @@
-##Создал тренировочный кластер 
+# Создал тренировочный кластер 
 gcloud container clusters create otus --machine-type=n1-standard-2 --num-nodes=2
 
-##Для запуска strace внутри пода изменил версию образа на latest.
+# Для запуска strace внутри пода изменил версию образа на latest.
 kubectl apply -f kubernetes-debug/strace/agent_daemonset.yml 
-#Развернул под с вебсервером на борту
+# Развернул под с вебсервером на борту
 kubectl run --generator=run-pod/v1 websrv --image=nginx
 
-#Запустил kubectl debug и получил достур к шелу
+# Запустил kubectl debug и получил достур к шелу
 kubectl debug websrv --port-forward
 #Запустил strace
 bash-5.0# strace -p 1
@@ -20,7 +20,7 @@ end port-forward...
 # Развернул кластер с Calico
 gcloud container clusters create otus --enable-network-policy
 
-#Установим netperf оператор
+# Установим netperf оператор
 git clone https://github.com/piontec/netperf-operator.git 
 
 kubectl apply -f ./deploy/crd.yaml
@@ -29,7 +29,7 @@ kubectl apply -f ./deploy/operator.yaml
 
 # Запустил пример
 kubectl apply -f ./deploy/cr.yaml
-  # Результат до мприменения политики
+# Результат до применения политики
 macpro:kit maksim.vasilev$  kubectl describe netperf.app.example.com/example
 Name:         example
 Namespace:    default
