@@ -6,7 +6,7 @@ spec:
   containers:
     - name: test
       image: ubuntu
-      command: ["/bin/bash", "-ec", "while :; do sleep 2; done"]
+      command: ["/bin/bash", "-ec", "while :; do sleep 350; done"]
       volumeMounts:
         - mountPath: /data
           name: test-volume
